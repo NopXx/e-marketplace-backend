@@ -7,6 +7,10 @@ app.get('/', (req, res) => {
     res.send('Hello, world')
 })
 
+app.get('/api', (req, res) => {
+    res.send('first api')
+})
+
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
 })
