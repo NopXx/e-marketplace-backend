@@ -16,16 +16,16 @@ npm i
 ```javascript
 ---------------------
 POST /sign-up {
-    f_name:
-    l_name:
-    username:
-    password:
-    tel:
+    "f_name":
+    "l_name":
+    "username":
+    "password":
+    "tel":
 }
 ----------------------
 POST /login {
-    username:
-    password:
+    "username":
+    "password":
 }
 ------------------------
 GET /getuser {
