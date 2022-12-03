@@ -6,13 +6,27 @@ const bodyParser = require('body-parser');
 
 const port = process.env.PORT || 3000
 
+app.use(bodyParser.json({ limit: "50mb" }));
+
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: false,
+    parameterLimit: 50000,
+  })
+);
+app.use(
+    cors({
+        origin: "*",
+        method: ["GET", "POST", "PATCH", "DELETE"],
+    })
+)
 app.get('/', (req, res) => {
     res.send('Hello, world')
 })
 
-app.get('/api', (req, res) => {
-    res.send('first api')
-})
+const auth = require("./routes/Auth.js");
+app.use("/api/auth", auth);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
