@@ -10,8 +10,9 @@ npm i
 ```
 
 ## `API Rote`
+<details>
+<summary>#### `api/auth`</summary>
 
-#### `api/auth`
 ```javascript
 ---------------------
 POST /sign-up {
@@ -35,3 +36,4 @@ GET /getuser {
 }
 
 ```
+</details>
