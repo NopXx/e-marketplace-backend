@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authJwt = require('../middleware/authJwt')
 const db = require('../lib/db.js')
+const verifyForm = require('../middleware/verifyForm')
 
 router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
@@ -10,7 +11,8 @@ router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
     (err, data) => {
       if (err) {
         return res.status(400).send({
-          message: err.code
+          code: err.code,
+          message: err.message
         })
       } else {
         return res.status(200).send({
@@ -22,29 +24,79 @@ router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
   )
 })
 
-router.post('/useradd', [authJwt.verifyToken], (req, res) => {
-  const user_id = req.user.user_id
-  const address = req.body.address
-  const sub_district = req.body.sub_district
-  const district = req.body.district
-  const province = req.body.province
-  const tel = req.body.tel
-  db.query(
-    `INSERT INTO user_address (user_id, address , sub_district, district, province, tel) 
-                VALUES (${user_id}, '${address}', '${sub_district}', '${district}', '${province}', ${tel})`,
-    (err, result) => {
-      if (err) {
-        return res.status(400).send({
-          message: err.code
-        })
-      } else {
-        return res.status(200).send({
-          message: 'insert succeeded step next verify otp',
-          user_address_id: result.insertId
-        })
+router.post(
+  '/useradd',
+  [authJwt.verifyToken, verifyForm.Useradd],
+  (req, res) => {
+    const title = req.body.title
+    const user_id = req.user.user_id
+    const address = req.body.address
+    const sub_district = req.body.sub_district
+    const district = req.body.district
+    const province = req.body.province
+    const tel = req.body.tel
+    db.query(
+      `INSERT INTO user_address (user_id, address_title, address , sub_district, district, province, tel) 
+                VALUES (${user_id}, '${title}', '${address}', '${sub_district}', '${district}', '${province}', ${tel})`,
+      (err, result) => {
+        if (err) {
+          return res.status(400).send({
+            code: err.code,
+            message: err.message
+          })
+        } else {
+          return res.status(201).send({
+            message: 'insert succeeded step next verify otp',
+            user_address_id: parseInt(result.insertId)
+          })
+        }
       }
-    }
-  )
-})
+    )
+  }
+)
+
+router.patch(
+  '/useradd/:user_address_id',
+  [authJwt.verifyToken, verifyForm.Useradd],
+  (req, res) => {
+    const user_a_id = req.params.user_address_id
+    const title = req.body.title
+    const user_id = req.user.user_id
+    const address = req.body.address
+    const sub_district = req.body.sub_district
+    const district = req.body.district
+    const province = req.body.province
+    const tel = req.body.tel
+    db.query(
+      `select * from user_address where user_a_id = ${user_a_id};`,
+      (err, result) => {
+        if (err) {
+          return res.status(400).send({
+            code: err.code,
+            message: err.message
+          })
+        } else {
+          db.query(
+            `update user_address set address_title = '${title}', address = '${address}', sub_district = '${sub_district}',
+   district = '${district}', province = '${province}', tel = ${tel} 
+   where user_a_id = ${user_a_id} AND user_id = ${user_id};`,
+            (err, result) => {
+              if (err) {
+                return res.status(400).send({
+                  code: err.code,
+                  message: err.message
+                })
+              } else {
+                return res.status(200).send({
+                  message: 'update succeed'
+                })
+              }
+            }
+          )
+        }
+      }
+    )
+  }
+)
 
 module.exports = router
