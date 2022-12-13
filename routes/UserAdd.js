@@ -113,6 +113,11 @@ router.delete(
             message: err.message
           })
         } else {
+          if (result.length === 0) {
+            return res.status(401).send({
+              message: 'user_address_id not found'
+            })
+          }
           db.query(`delete from user_address where user_a_id = ${user_a_id}`, (err, result) => {
             if (err) {
               return res.status(400).send({
