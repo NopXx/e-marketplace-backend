@@ -12,7 +12,10 @@ router.post('/created_role/:user_id', (req, res) => {
     `INSERT INTO user_role (user_id, role_id) VALUES (${user_id}, 1);`,
     (err, result) => {
       if (err) {
-        res.send(err)
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
       } else {
         return res.status(200).send({
           msg: 'insert succeeded'

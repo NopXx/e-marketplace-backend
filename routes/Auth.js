@@ -23,7 +23,8 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
           (err, result) => {
             if (err) {
               return res.status(400).send({
-                message: err
+                code: err.code,
+                message: err.message
               })
             } else {
               db.query(
@@ -31,10 +32,11 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
                 (err, result1) => {
                   if (err) {
                     return res.status(400).send({
-                      message: err.code
+                      code: err.code,
+                      message: err.message
                     })
                   } else {
-                    return res.status(200).send({
+                    return res.status(201).send({
                       message: 'Registered!'
                     })
                   }
@@ -58,7 +60,8 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
       // user does not exists
       if (err) {
         return res.status(400).send({
-          message: err.code
+          code: err.code,
+          message: err.message
         })
       } else {
         if (result.length === 0) {

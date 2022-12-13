@@ -29,7 +29,8 @@ router.post('/req-otp', [authJwt.verifyToken, verify.ReqOTP], (req, res) => {
     (err, result) => {
       if (err) {
         return res.status(400).send({
-          message: err.code
+          code: err.code,
+          message: err.message
         })
       } else {
         if (result.length === 0) {
@@ -43,7 +44,8 @@ router.post('/req-otp', [authJwt.verifyToken, verify.ReqOTP], (req, res) => {
             (err, result) => {
               if (err) {
                 return res.status(400).send({
-                  message: err.code
+                  code: err.code,
+                  message: err.message
                 })
               } else {
                 return res.status(200).send({
@@ -68,7 +70,8 @@ router.post('/ver-otp', [authJwt.verifyToken, verify.verifyOTP], (req, res) => {
     (err, result) => {
       if (err) {
         return res.status(400).send({
-          message: err.code
+          code: err.code,
+          message: err.message
         })
       } else {
         if (result.length === 0) {
@@ -81,7 +84,8 @@ router.post('/ver-otp', [authJwt.verifyToken, verify.verifyOTP], (req, res) => {
             (err, result1) => {
               if (err) {
                 return res.status(400).send({
-                  message: err.code
+                  code: err.code,
+                  message: err.message
                 })
               } else {
                 db.query(
@@ -90,7 +94,8 @@ router.post('/ver-otp', [authJwt.verifyToken, verify.verifyOTP], (req, res) => {
                   (err, result2) => {
                     if (err) {
                       return res.status(400).send({
-                        message: err.code
+                        code: err.code,
+                        message: err.message
                       })
                     } else {
                       return res.status(200).send({
