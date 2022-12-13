@@ -12,7 +12,7 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
     (err, result) => {
       if (result.length) {
         return res.status(409).send({
-          msg: 'Telephone Number is Activation'
+          message: 'Telephone Number is Activation'
         })
       } else {
         // username is available
@@ -23,17 +23,19 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
           (err, result) => {
             if (err) {
               return res.status(400).send({
-                msg: err
+                message: err
               })
             } else {
               db.query(
                 `INSERT INTO user_role (user_id, role_id) VALUES (${result.insertId}, 1);`,
                 (err, result1) => {
                   if (err) {
-                    res.send(err)
+                    return res.status(400).send({
+                      message: err.code
+                    })
                   } else {
-                    return res.status(201).send({
-                      msg: 'Registered!'
+                    return res.status(200).send({
+                      message: 'Registered!'
                     })
                   }
                 }
@@ -56,7 +58,7 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
       // user does not exists
       if (err) {
         return res.status(400).send({
-          msg: err
+          message: err.code
         })
       } else {
         if (result.length === 0) {
@@ -82,7 +84,7 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
                 `UPDATE user SET last_login = now() WHERE user_id = '${result[0].user_id}'`
               )
               return res.status(200).send({
-                msg: 'Logged in!',
+                message: 'Logged in!',
                 token,
                 user: result[0]
               })
