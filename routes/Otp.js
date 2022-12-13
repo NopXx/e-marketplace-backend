@@ -77,7 +77,7 @@ router.post('/ver-otp', [authJwt.verifyToken, verify.verifyOTP], (req, res) => {
           })
         } else {
           db.query(
-            `UPDATE user_address SET status = 2 WHERE user_id = ${user_id} AND user_a_id = ${user_a_id}`,
+            `UPDATE user_address SET status = 1 WHERE user_id = ${user_id} AND user_a_id = ${user_a_id}`,
             (err, result1) => {
               if (err) {
                 return res.status(400).send({
