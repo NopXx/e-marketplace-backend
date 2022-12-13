@@ -99,4 +99,36 @@ router.patch(
   }
 )
 
+router.delete(
+  '/useradd/:user_address_id',
+  [authJwt.verifyToken, verifyForm.Useradd_del],
+  (req, res) => {
+    const user_a_id = req.params.user_address_id
+    db.query(
+      `select * from user_address where user_a_id = ${user_a_id};`,
+      (err, result) => {
+        if (err) {
+          return res.status(400).send({
+            code: err.code,
+            message: err.message
+          })
+        } else {
+          db.query(`delete from user_address where user_a_id = ${user_a_id}`, (err, result) => {
+            if (err) {
+              return res.status(400).send({
+                code: err.code,
+                message: err.message
+              })
+            } else {
+              return res.status(200).send({
+                message: 'delete succeeded'
+              })
+            }
+          })
+        }
+      }
+    )
+  }
+)
+
 module.exports = router
