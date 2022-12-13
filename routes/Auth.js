@@ -68,7 +68,7 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
             f_name: result[0].f_name,
             role_id: result[0].role_id,
             role_name: result[0].role_name,
-            userId: result[0].user_id
+            user_id: result[0].user_id
           }
           const secret = process.env.ACCESS_TOKEN_SECRET
           const options = {
