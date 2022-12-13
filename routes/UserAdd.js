@@ -6,7 +6,7 @@ const db = require('../lib/db.js')
 router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
-    `select * from user_addres where user_id = ${user_id}`,
+    `select * from user_address where user_id = ${user_id}`,
     (err, data) => {
       if (err) {
         return res.status(400).send({
