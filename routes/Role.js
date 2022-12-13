@@ -5,13 +5,16 @@ const db = require("../lib/db.js");
 const userMiddleware = require("../middleware/user");
 
 router.get("/role", [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
-  db.query("SELECT * FROM role", (err, rows) => {
+  db.query("SELECT * FROM role", (err, data) => {
     if (err) {
       return res.status(401).send({
         message: err,
       });
     } else {
-      return res.status(200).send(rows);
+      return res.status(200).send({
+        data,
+        totle: data.length
+      });
     }
   });
 });
