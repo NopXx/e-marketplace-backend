@@ -22,7 +22,23 @@ verifyToken = (req, res, next) => {
 
 };
 
+isAdmin = async (req, res, next) => {
+  try {
+      if (req.user.role_name === "Admin" || req.user.role_name === "Teacher" || req.user.role_name === "admin" || req.user.role_name === "teacher") {
+        return next();
+      }
+    return res.status(403).send({
+      message: "Require Admin Role!",
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Unable to validate User role!",
+    });
+  }
+};
+
 const authJwt = {
-    verifyToken
+    verifyToken,
+    isAdmin
 };
 module.exports = authJwt;
