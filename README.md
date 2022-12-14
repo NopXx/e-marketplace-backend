@@ -61,7 +61,7 @@ GET /userrole {
             "role_name": "user"
         }
     ],
-    "title": 2
+    "total": 2
 }
 ----------------------
 GET /userrole/:user_id {
@@ -72,7 +72,7 @@ GET /userrole/:user_id {
             "role_name": "user"
         }
     ],
-    "title": 1
+    "total": 1
 }
 ------------------------
 PATCH /userrole/:user_id {
@@ -103,7 +103,7 @@ GET /useradd {
             "status": 1
         }
     ],
-    "totle": 1
+    "total": 1
 }
 ----------------------
 GET /useradd/:user_a_id {

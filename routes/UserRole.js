@@ -23,7 +23,7 @@ FROM user_role
         } else {
           return res.status(200).send({
             data: result,
-            title: result.length
+            total: result.length
           })
         }
       }
@@ -55,7 +55,7 @@ router.get(
           } else {
             return res.status(200).send({
               data: result,
-              title: result.length
+              total: result.length
             })
           }
         }

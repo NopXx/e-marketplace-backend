@@ -17,7 +17,7 @@ router.get('/useradd', [authJwt.verifyToken], (req, res) => {
       } else {
         return res.status(200).send({
           data,
-          totle: data.length
+          total: data.length
         })
       }
     }
