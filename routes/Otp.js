@@ -34,7 +34,7 @@ router.post('/req-otp', [authJwt.verifyToken, verify.ReqOTP], (req, res) => {
         })
       } else {
         if (result.length === 0) {
-          return res.status(400).send({
+          return res.status(404).send({
             message: 'user_address_id not found'
           })
         } else {

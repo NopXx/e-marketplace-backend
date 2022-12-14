@@ -11,7 +11,7 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
     `SELECT * FROM user WHERE tel = LOWER(${db.escape(req.body.tel)});`,
     (err, result) => {
       if (result.length) {
-        return res.status(409).send({
+        return res.status(403).send({
           message: 'Telephone Number is Activation'
         })
       } else {
@@ -65,7 +65,7 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
         })
       } else {
         if (result.length === 0) {
-          return res.status(400).send({
+          return res.status(404).send({
             msg: 'username or password not found'
           })
         } else {
