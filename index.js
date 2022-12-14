@@ -25,6 +25,12 @@ app.get('/', (req, res) => {
     res.send('Hello, world')
 })
 
+app.get('/api', (req, res) => {
+  return res.status(200).send({
+    git: 'https://github.com/NopXx/e-marketplace-backend.git'
+  })
+})
+
 const auth = require("./routes/Auth.js");
 const role = require("./routes/Role");
 const user_add = require("./routes/UserAdd");
