@@ -28,9 +28,10 @@ app.get('/', (req, res) => {
 const auth = require("./routes/Auth.js");
 const role = require("./routes/Role");
 const user_add = require("./routes/UserAdd");
+const user_role = require("./routes/UserRole");
 const otp = require("./routes/Otp")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp]);
+app.use("/api", [role, user_add, otp, user_role]);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
