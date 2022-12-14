@@ -3,6 +3,11 @@ const db = require("../lib/db.js");
 require('dotenv').config();
 
 verifyToken = (req, res, next) => {
+  if (!req.headers.authorization) {
+    return res.status(401).send({
+      message: "Unknown Token",
+    });
+  }
   let token = req.headers.authorization.split(' ')[1];
 
   if (!token) {
