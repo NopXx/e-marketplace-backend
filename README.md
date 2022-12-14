@@ -4,7 +4,7 @@
 
 # Get Started 🚀
 
-## nodeJS + MySql + Jwt
+## 🟢NodeJS + 🐬MySql + 🔑Jwt
 
 ```javascript
 npm i
