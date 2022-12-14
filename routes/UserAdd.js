@@ -4,7 +4,7 @@ const authJwt = require('../middleware/authJwt')
 const db = require('../lib/db.js')
 const verifyForm = require('../middleware/verifyForm')
 
-router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
+router.get('/useradd', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
     `select * from user_address where user_id = ${user_id}`,
@@ -18,6 +18,30 @@ router.get('/getUserAdd', [authJwt.verifyToken], (req, res) => {
         return res.status(200).send({
           data,
           totle: data.length
+        })
+      }
+    }
+  )
+})
+
+router.get('/useradd/:user_a_id', [authJwt.verifyToken], (req, res) => {
+  const user_a_id = req.params.user_a_id
+  db.query(
+    `select * from user_address where user_a_id = ${user_a_id}`,
+    (err, data) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (data.length === 0) {
+          return res.status(404).send({
+            message: 'user_address_id not found'
+          })
+        }
+        return res.status(200).send({
+          data,
         })
       }
     }
