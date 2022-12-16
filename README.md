@@ -168,3 +168,90 @@ POST /ver-otp {
 ```
 
 </details>
+
+<details>
+<summary>api/user</summary>
+
+```javascript
+---------------------
+// getuser full
+GET /user {
+    "data": [
+        {
+            "user_id": 5,
+            "f_name": "nop",
+            "l_name": "kh",
+            "username": "admin",
+            "password": "1234",
+            "created_at": "2022-12-13T05:17:11.000Z",
+            "updated_at": null,
+            "tel": "123456",
+            "last_login": "2022-12-16T14:29:32.000Z"
+        }
+    ]
+}
+----------------------
+// get user all role admin
+GET /user/all {
+    "data": [
+        {
+            "user_id": 5,
+            "f_name": "nop",
+            "l_name": "kh",
+            "username": "admin",
+            "password": "1234",
+            "created_at": "2022-12-13T05:17:11.000Z",
+            "updated_at": null,
+            "tel": "123456",
+            "last_login": "2022-12-16T14:29:32.000Z"
+        },
+        {
+            "user_id": 6,
+            "f_name": "nop2",
+            "l_name": "kh2",
+            "username": "user1",
+            "password": "1234",
+            "created_at": "2022-12-14T07:15:31.000Z",
+            "updated_at": "2022-12-16T14:48:52.000Z",
+            "tel": "1234567",
+            "last_login": "2022-12-15T08:03:27.000Z"
+        }
+    ],
+    "total": 2
+}
+
+---------------------
+// getuser by id role admin
+GET /user/:user_id {
+     "data": [
+        {
+            "user_id": 6,
+            "f_name": "nop2",
+            "l_name": "kh2",
+            "username": "user1",
+            "password": "1234",
+            "created_at": "2022-12-14T07:15:31.000Z",
+            "updated_at": "2022-12-16T14:48:52.000Z",
+            "tel": "1234567",
+            "last_login": "2022-12-15T08:03:27.000Z"
+        }
+    ]
+}
+
+---------------------
+// update by id
+PATCH /user/:user_id {
+     "f_name": "nop2",
+     "l_name": "kh2",
+     "username": "user2",
+     "password": "1234"
+}
+
+---------------------
+// delete by id
+DELETE /user/:user_id {
+    "message": "delete succeeded"
+}
+```
+
+</details>
