@@ -25,7 +25,7 @@ router.get('/store/search/username', [authJwt.verifyToken], (req, res) => {
 })
 
 // search store
-router.get('/store/search', [authJwt.verifyToken], (req, res) => {
+router.get('/store/search', (req, res) => {
   const store_username = req.query.store_username
   const store_name = req.query.store_name
   db.query(
