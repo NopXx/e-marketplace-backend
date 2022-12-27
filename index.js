@@ -39,8 +39,9 @@ const otp = require("./routes/Otp")
 const user = require("./routes/User");
 const store = require("./routes/Store");
 const product = require("./routes/Product")
+const product_ty = require("./routes/ProductTy")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product]);
+app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty]);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
