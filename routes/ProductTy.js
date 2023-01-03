@@ -46,7 +46,7 @@ router.post(
   (req, res) => {
     const name = req.body.name
     db.query(
-      `select * from product_type where product_type_name = '${product_type}';`,
+      `select * from product_type where product_type_name = '${name}';`,
       (err, data) => {
         if (err) {
           return res.status(401).send({
@@ -59,7 +59,7 @@ router.post(
             })
           } else {
             db.query(
-              `insert into product_type (product_type_name) values ('${product_type}');`,
+              `insert into product_type (product_type_name) values ('${name}');`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send({
