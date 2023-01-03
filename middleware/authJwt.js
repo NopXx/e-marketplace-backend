@@ -58,7 +58,7 @@ isStore = (req, res, next) => {
           if (data.length > 0) {
             return next()
           } else {
-            return res.status(403).send({
+            return res.status(404).send({
               message: 'Please Signup Store'
             })
           }
