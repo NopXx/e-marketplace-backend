@@ -11,7 +11,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
-    extended: false,
+    extended: true,
     parameterLimit: 50000,
   })
 );
@@ -40,8 +40,9 @@ const user = require("./routes/User");
 const store = require("./routes/Store");
 const product = require("./routes/Product")
 const product_ty = require("./routes/ProductTy")
+const upload = require("./routes/Upload")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty]);
+app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload]);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
