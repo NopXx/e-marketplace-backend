@@ -26,18 +26,21 @@ router.get('/product/search', (req, res) => {
 
 // get Product All
 router.get('/product', (req, res) => {
-  db.query(`select * from product;`, (err, data) => {
-    if (err) {
-      return res.status(401).send({
-        message: err.message
-      })
-    } else {
-      return res.status(200).send({
-        data,
-        total: data.length
-      })
+  db.query(
+    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id;`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
     }
-  })
+  )
 })
 
 // create Product

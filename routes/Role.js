@@ -18,10 +18,9 @@ router.get('/role', [authJwt.verifyToken], (req, res) => {
           message: err
         })
       } else {
-        return res.status(200).send({
-          data,
-          totle: data.length
-        })
+        return res.status(200).send(
+          data
+        )
       }
     }
   )
