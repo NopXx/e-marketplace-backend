@@ -43,6 +43,25 @@ router.get('/product', (req, res) => {
   )
 })
 
+// get Product By Store ID
+router.get('/product/:id', (req, res) => {
+  const id = req.params.id
+  db.query(
+    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product.store_id = ${id};`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
 // create Product
 router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
   const user_id = req.user.user_id
