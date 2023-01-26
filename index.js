@@ -41,8 +41,9 @@ const store = require("./routes/Store");
 const product = require("./routes/Product")
 const product_ty = require("./routes/ProductTy")
 const upload = require("./routes/Upload")
+const image = require("./routes/Image")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload]);
+app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, image]);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
