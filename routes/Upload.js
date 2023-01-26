@@ -140,27 +140,5 @@ router.post('/upload/product/detail', async (req, res) => {
   }
 })
 
-// delete image
-router.delete('/upload/delete', async (req, res) => {
-  const id = req.body.id
-  try {
-    const result = await cloudinary.uploader.destroy(id)
-    db.query(`delete from db_image where img_id = '${id}';`, (err, result) => {
-      if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
-      } else {
-        return res.status(200).send({
-          message: 'Delete image successfully'
-        })
-      }
-    })
-  } catch (err) {
-    res.status(500).send({
-      message: err
-    })
-  }
-})
 
 module.exports = router
