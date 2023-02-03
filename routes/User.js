@@ -17,9 +17,9 @@ router.get('/user', [authJwt.verifyToken], (req, res) => {
           message: 'user_id not found'
         })
       }
-      return res.status(200).send({
+      return res.status(200).send(
         data
-      })
+      )
     }
   })
 })
@@ -37,10 +37,9 @@ router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
           message: 'user_id not found'
         })
       }
-      return res.status(200).send({
-        data,
-        total: data.length
-      })
+      return res.status(200).send(
+        data
+      )
     }
   })
 })
@@ -62,9 +61,9 @@ router.get(
             message: 'user_id not found'
           })
         }
-        return res.status(200).send({
+        return res.status(200).send(
           data
-        })
+        )
       }
     })
   }

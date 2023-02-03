@@ -16,9 +16,7 @@ router.get('/follow/product', [authJwt.verifyToken], (req, res) => {
           message: err.message
         })
       } else {
-        return res.status(200).send({
-          data
-        })
+        return res.status(200).send(data)
       }
     }
   )
