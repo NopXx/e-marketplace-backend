@@ -10,15 +10,9 @@ router.get('/useradd', [authJwt.verifyToken], (req, res) => {
     `select * from user_address where user_id = ${user_id}`,
     (err, data) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
-        return res.status(200).send({
-          data,
-          total: data.length
-        })
+        return res.status(200).send(data)
       }
     }
   )
@@ -30,19 +24,14 @@ router.get('/useradd/:user_a_id', [authJwt.verifyToken], (req, res) => {
     `select * from user_address where user_a_id = ${user_a_id}`,
     (err, data) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         if (data.length === 0) {
           return res.status(404).send({
             message: 'user_address_id not found'
           })
         }
-        return res.status(200).send({
-          data,
-        })
+        return res.status(200).send(data)
       }
     }
   )
@@ -58,16 +47,14 @@ router.post(
     const sub_district = req.body.sub_district
     const district = req.body.district
     const province = req.body.province
+    const zipcode = req.body.zipcode
     const tel = req.body.tel
     db.query(
-      `INSERT INTO user_address (user_id, address_title, address , sub_district, district, province, tel) 
-                VALUES (${user_id}, '${title}', '${address}', '${sub_district}', '${district}', '${province}', ${tel})`,
+      `INSERT INTO user_address (user_id, address_title, address , sub_district, district, province, zipcode, tel, status) 
+                VALUES (${user_id}, '${title}', '${address}', '${sub_district}', '${district}', '${province}',${zipcode}, ${tel}, 1)`,
       (err, result) => {
         if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
           return res.status(201).send({
             message: 'insert succeeded step next verify otp',
@@ -90,33 +77,34 @@ router.patch(
     const sub_district = req.body.sub_district
     const district = req.body.district
     const province = req.body.province
+    const zipcode = req.body.zipcode
     const tel = req.body.tel
     db.query(
       `select * from user_address where user_a_id = ${user_a_id};`,
       (err, result) => {
         if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
-          db.query(
-            `update user_address set address_title = '${title}', address = '${address}', sub_district = '${sub_district}',
-   district = '${district}', province = '${province}', tel = ${tel} 
+          if (result.length === 0) {
+            return res.status(404).send({
+              message: 'user address not found'
+            })
+          } else {
+            db.query(
+              `update user_address set address_title = '${title}', address = '${address}', sub_district = '${sub_district}',
+   district = '${district}', province = '${province}',zipcode = ${zipcode}, tel = ${tel} 
    where user_a_id = ${user_a_id} AND user_id = ${user_id};`,
-            (err, result) => {
-              if (err) {
-                return res.status(400).send({
-                  code: err.code,
-                  message: err.message
-                })
-              } else {
-                return res.status(200).send({
-                  message: 'update succeed'
-                })
+              (err, result) => {
+                if (err) {
+                  return res.status(401).send(err)
+                } else {
+                  return res.status(200).send({
+                    message: 'update succeed'
+                  })
+                }
               }
-            }
-          )
+            )
+          }
         }
       }
     )
@@ -132,28 +120,25 @@ router.delete(
       `select * from user_address where user_a_id = ${user_a_id};`,
       (err, result) => {
         if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
           if (result.length === 0) {
             return res.status(404).send({
               message: 'user_address_id not found'
             })
           }
-          db.query(`delete from user_address where user_a_id = ${user_a_id}`, (err, result) => {
-            if (err) {
-              return res.status(400).send({
-                code: err.code,
-                message: err.message
-              })
-            } else {
-              return res.status(200).send({
-                message: 'delete succeeded'
-              })
+          db.query(
+            `delete from user_address where user_a_id = ${user_a_id}`,
+            (err, result) => {
+              if (err) {
+                return res.status(401).send(err)
+              } else {
+                return res.status(200).send({
+                  message: 'delete succeeded'
+                })
+              }
             }
-          })
+          )
         }
       }
     )
