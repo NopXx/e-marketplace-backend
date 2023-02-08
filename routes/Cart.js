@@ -7,11 +7,12 @@ router.get('/cart', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   const limit = req.query.limit
   db.query(
-    `select cart.cart_id, cart.item_number, cart.created_at, product.*, db_image.image 
+    `select cart.cart_id, cart.item_number, cart.created_at, product.*, store.store_name, db_image.image 
     from cart 
       LEFT JOIN product ON cart.product_id = product.product_id 
       LEFT JOIN db_image ON db_image.product_id = product.product_id 
-    where cart.user_id = ${user_id} AND db_image.default_image = 1 ORDER BY cart.cart_id DESC`,
+      LEFT JOIN store ON product.store_id = store.store_id
+    where cart.user_id = ${user_id} AND db_image.default_image = 1 AND cart.cart_order_status = 0 ORDER BY cart.cart_id DESC`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
