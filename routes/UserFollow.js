@@ -22,6 +22,21 @@ router.get('/follow/product', [authJwt.verifyToken], (req, res) => {
   )
 })
 
+// get product follow by product_id
+router.get('/follow/product/:id', [authJwt.verifyToken], (req, res) => {
+  const id = req.params.id
+  const user_id = req.user.user_id
+  db.query(
+    `select * from product_u_follow where user_id = ${user_id} AND product_id = ${id}`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send(err)
+      } else {
+        return res.status(200).send(data)
+      }
+    }
+  )
+})
 router.post('/follow/product/:id', [authJwt.verifyToken], (req, res) => {
   const id = req.params.id
   const user_id = req.user.user_id
@@ -65,9 +80,7 @@ router.delete('/follow/product/:id', [authJwt.verifyToken], (req, res) => {
     `select * from product_u_follow where user_id = ${user_id} AND product_id = ${id}`,
     (err, result) => {
       if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         if (result.length === 0) {
           return res.status(404).send({
@@ -75,12 +88,10 @@ router.delete('/follow/product/:id', [authJwt.verifyToken], (req, res) => {
           })
         } else {
           db.query(
-            `delete from product_u_product where user_id = ${user_id} AND product_id = ${id}`,
+            `delete from product_u_follow where user_id = ${user_id} AND product_id = ${id}`,
             (err, result) => {
               if (err) {
-                return res.status(401).send({
-                  message: err.message
-                })
+                return res.status(401).send(err)
               } else {
                 return res.status(200).send({
                   message: 'Un Like Product'
