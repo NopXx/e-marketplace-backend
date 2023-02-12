@@ -39,7 +39,7 @@ router.get('/cart/:product_id', [authJwt.verifyToken], (req, res) => {
     from cart 
       LEFT JOIN product ON cart.cart_id = product.product_id 
       LEFT JOIN db_image ON db_image.product_id = product.product_id 
-    where cart.user_id = ${user_id} and cart.product_id = ${product_id}`,
+    where cart.user_id = ${user_id} and cart.product_id = ${product_id} AND cart.cart_order_status = 0`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
