@@ -6,15 +6,14 @@ const db = require('../lib/db.js')
 router.get('/follow/product', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
-    `SELECT product_u_follow.*, product.product_name
+    `SELECT product_u_follow.*, product.*, db_image.image
     FROM product_u_follow 
-        LEFT JOIN product ON product_u_follow.product_id = product.product_id
-    WHERE product_u_follow.user_id = ${user_id};`,
+      LEFT JOIN product ON product_u_follow.product_id = product.product_id 
+      LEFT JOIN db_image ON db_image.product_id = product.product_id
+    WHERE product_u_follow.user_id = ${user_id} AND db_image.default_image = 1 AND product.product_show = 1`,
     (err, data) => {
       if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         return res.status(200).send(data)
       }
