@@ -5,23 +5,21 @@ const authJwt = require('../middleware/authJwt')
 
 router.get('/user', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
-  db.query(`select * from user where user_id = ${user_id};`, (err, data) => {
-    if (err) {
-      return res.status(400).send({
-        code: err.code,
-        message: err.message
-      })
-    } else {
-      if (data.length === 0) {
-        return res.status(404).send({
-          message: 'user_id not found'
-        })
+  db.query(
+    `select user.*, db_image.image from user LEFT JOIN db_image ON db_image.user_id = user.user_id where user.user_id = ${user_id};`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send(err)
+      } else {
+        if (data.length === 0) {
+          return res.status(404).send({
+            message: 'user_id not found'
+          })
+        }
+        return res.status(200).send(data)
       }
-      return res.status(200).send(
-        data
-      )
     }
-  })
+  )
 })
 
 router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
@@ -37,9 +35,7 @@ router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
           message: 'user_id not found'
         })
       }
-      return res.status(200).send(
-        data
-      )
+      return res.status(200).send(data)
     }
   })
 })
@@ -61,9 +57,7 @@ router.get(
             message: 'user_id not found'
           })
         }
-        return res.status(200).send(
-          data
-        )
+        return res.status(200).send(data)
       }
     })
   }
