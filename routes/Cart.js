@@ -7,7 +7,8 @@ router.get('/cart', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   const limit = req.query.limit
   db.query(
-    `select cart.cart_id, cart.item_number, cart.created_at, product.*, store.store_name, db_image.image 
+    `select cart.cart_id, cart.item_number, cart.created_at, product.*, store.store_name, db_image.image,
+    (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image
     from cart 
       LEFT JOIN product ON cart.product_id = product.product_id 
       LEFT JOIN db_image ON db_image.product_id = product.product_id 
