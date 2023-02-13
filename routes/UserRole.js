@@ -9,23 +9,11 @@ router.get('/userrole', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
     `SELECT user_role.user_id, user_role.role_id, role.role_name
 FROM user_role 
   LEFT JOIN role ON user_role.role_id = role.role_id;`,
-    (err, result) => {
+    (err, data) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
-        if (result.length === 0) {
-          return res.status(404).send({
-            message: 'user_id not found'
-          })
-        } else {
-          return res.status(200).send({
-            data: result,
-            total: result.length
-          })
-        }
+        return res.status(200).send(data)
       }
     }
   )
@@ -41,22 +29,16 @@ router.get(
   FROM user_role 
     LEFT JOIN role ON user_role.role_id = role.role_id
   WHERE user_role.user_id = ${user_id};`,
-      (err, result) => {
+      (err, data) => {
         if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
-          if (result.length === 0) {
+          if (data.length === 0) {
             return res.status(404).send({
               message: 'user_id not found'
             })
           } else {
-            return res.status(200).send({
-              data: result,
-              total: result.length
-            })
+            return res.status(200).send(data)
           }
         }
       }
@@ -75,13 +57,10 @@ router.patch(
       `select * from user_role where user_id = ${user_id} AND user_role_id = ${user_role_id};`,
       (err, result) => {
         if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
           if (result.length === 0) {
-            return res.status(403).send({
+            return res.status(401).send({
               message: 'user_id or user_role_id not found'
             })
           } else {
@@ -89,10 +68,7 @@ router.patch(
               `update user_role set role_id = ${role_id} where user_id = ${user_id} AND user_role_id = ${user_role_id};`,
               (err, result) => {
                 if (err) {
-                  return res.status(400).send({
-                    code: err.code,
-                    message: err.message
-                  })
+                  return res.status(401).send(err)
                 } else {
                   db.query(
                     `update user set updated_at = now() where user_id = ${user_id}`
