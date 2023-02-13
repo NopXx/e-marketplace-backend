@@ -5,16 +5,25 @@ const db = require('../lib/db.js')
 
 // get Product Type
 router.get('/product-type', (req, res) => {
-  db.query(`select * from product_type;`, (err, data) => {
+  db.query(`select product_type.*, db_image.image from product_type 
+  LEFT JOIN db_image ON db_image.product_type_id = product_type.product_type_id;`, (err, data) => {
     if (err) {
-      return res.status(401).send({
-        message: err.message
-      })
+      return res.status(401).send(err)
     } else {
-      return res.status(200).send({
-        data,
-        total: data.length
-      })
+      return res.status(200).send(data)
+    }
+  })
+})
+
+// get Product Type by id
+router.get('/product-type/:id',[authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
+  db.query(`select product_type.*, db_image.image from product_type 
+  LEFT JOIN db_image ON db_image.product_type_id = product_type.product_type_id
+  where product_type.product_type_id = ${req.params.id};`, (err, data) => {
+    if (err) {
+      return res.status(401).send(err)
+    } else {
+      return res.status(200).send(data)
     }
   })
 })
@@ -26,14 +35,9 @@ router.get('/product-type/search', (req, res) => {
     `select * from product_type where product_type_name like '%${name}%';`,
     (err, data) => {
       if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
-        return res.status(200).send({
-          data,
-          total: data.length
-        })
+        return res.status(200).send(data)
       }
     }
   )
@@ -49,9 +53,7 @@ router.post(
       `select * from product_type where product_type_name = '${name}';`,
       (err, data) => {
         if (err) {
-          return res.status(401).send({
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
           if (data.length > 0) {
             return res.status(403).send({
@@ -62,9 +64,7 @@ router.post(
               `insert into product_type (product_type_name) values ('${name}');`,
               (err, result) => {
                 if (err) {
-                  return res.status(401).send({
-                    message: err.message
-                  })
+                  return res.status(401).send(err)
                 } else {
                   return res.status(201).send({
                     message: 'inserted successfully'
@@ -91,9 +91,7 @@ router.patch(
       `select * from product_type where product_type_id = ${id};`,
       (err, data) => {
         if (err) {
-          return res.status(401).send({
-            message: err.message
-          })
+          return res.status(401).send(err)
         } else {
           if (data.length === 0) {
             return res.status(404).send({
@@ -104,9 +102,7 @@ router.patch(
               `update product_type set product_type_name = '${name}' where product_type_id = ${id};`,
               (err, result) => {
                 if (err) {
-                  return res.status(401).send({
-                    message: err.message
-                  })
+                  return res.status(401).send(err)
                 } else {
                   return res.status(200).send({
                     message: 'Product type updated successfully'
