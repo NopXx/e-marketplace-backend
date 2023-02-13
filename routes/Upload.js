@@ -21,18 +21,14 @@ router.post(
         `select * from db_image where product_id = ${product_id};`,
         (err, result1) => {
           if (err) {
-            return res.status(401).send({
-              message: err.message
-            })
+            return res.status(401).send(err)
           } else {
             if (result1.length === 0) {
               db.query(
                 `insert into db_image (img_id, product_id, image, created_at, default_image) values ('${result.public_id}',${product_id}, '${result.url}', "${result.created_at}", 1);`,
                 (err, result2) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
@@ -45,9 +41,7 @@ router.post(
                 `insert into db_image (img_id, product_id, image, created_at) values ('${result.public_id}',${product_id}, '${result.url}', "${result.created_at}");`,
                 (err, result2) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
@@ -66,65 +60,6 @@ router.post(
   }
 )
 
-// upload product type image
-router.post(
-  '/upload/product-type',
-  upload.single('image'),
-  [authJwt.verifyToken, authJwt.isAdmin],
-  async (req, res) => {
-    const product_type_id = req.body.product_type_id
-    try {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'image'
-      })
-      db.query(
-        `select * from db_image where product_type_id = ${product_type_id};`,
-        async (err, result1) => {
-          if (err) {
-            return res.status(401).send({
-              message: err.message
-            })
-          } else {
-            if (result1.length === 0) {
-              db.query(
-                `insert into db_image (img_id, product_type_id, image, created_at, default_image) values ('${result.public_id}',${product_type_id}, '${result.url}', "${result.created_at}", 1);`,
-                (err, result) => {
-                  if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
-                  } else {
-                    return res.status(200).send({
-                      message: 'inserted successfully'
-                    })
-                  }
-                }
-              )
-            } else {
-              db.query(
-                `insert into db_image (img_id, user_id, image, created_at) values ('${result.public_id}',${product_type_id}, '${result.url}', "${result.created_at}");`,
-                (err, result) => {
-                  if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
-                  } else {
-                    return res.status(200).send({
-                      message: 'inserted successfully'
-                    })
-                  }
-                }
-              )
-            }
-          }
-        }
-      )
-    } catch (err) {
-      console.error(err)
-      res.status(500).json({ err: 'Something went wrong' })
-    }
-  }
-)
 
 // upload profile image
 router.post(
@@ -141,18 +76,14 @@ router.post(
         `select * from db_image where user_id = ${user_id};`,
         async (err, result1) => {
           if (err) {
-            return res.status(401).send({
-              message: err.message
-            })
+            return res.status(401).send(err)
           } else {
             if (result1.length === 0) {
               db.query(
                 `insert into db_image (img_id, user_id, image, created_at, default_image) values ('${result.public_id}',${user_id}, '${result.url}', "${result.created_at}", 1);`,
                 (err, result) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
@@ -168,9 +99,7 @@ router.post(
                 `update db_image set img_id = '${result.public_id}', image = '${result.url}', created_at = "${result.created_at}" where user_id = ${user_id};`,
                 (err, result) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
@@ -204,18 +133,14 @@ router.post(
         `select * from db_image where store_id = ${store_id};`,
         async (err, result1) => {
           if (err) {
-            return res.status(401).send({
-              message: err.message
-            })
+            return res.status(401).send(err)
           } else {
             if (result1.length === 0) {
               db.query(
                 `insert into db_image (img_id, store_id, image, created_at, default_image) values ('${result.public_id}',${store_id}, '${result.url}', "${result.created_at}", 1);`,
                 (err, result) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
@@ -231,9 +156,64 @@ router.post(
                 `update db_image set img_id = '${result.public_id}', image = '${result.url}', created_at = "${result.created_at}" where store_id = ${store_id};`,
                 (err, result) => {
                   if (err) {
-                    return res.status(401).send({
-                      message: err.message
+                    return res.status(401).send(err)
+                  } else {
+                    return res.status(200).send({
+                      message: 'inserted successfully'
                     })
+                  }
+                }
+              )
+            }
+          }
+        }
+      )
+    } catch (err) {
+      console.error(err)
+      res.status(500).json({ err: 'Something went wrong' })
+    }
+  }
+)
+
+// upload product type image
+router.post(
+  '/upload/product-type/:id',
+  upload.single('image'),
+  [authJwt.verifyToken],
+  async (req, res) => {
+    const ptype_id = req.params.id
+    try {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'image/ptype'
+      })
+      db.query(
+        `select * from db_image where product_type_id = ${ptype_id};`,
+        async (err, result1) => {
+          if (err) {
+            return res.status(401).send(err)
+          } else {
+            if (result1.length === 0) {
+              db.query(
+                `insert into db_image (img_id, product_type_id, image, created_at, default_image) values ('${result.public_id}',${ptype_id}, '${result.url}', "${result.created_at}", 1);`,
+                (err, result) => {
+                  if (err) {
+                    return res.status(401).send(err)
+                  } else {
+                    return res.status(200).send({
+                      message: 'inserted successfully'
+                    })
+                  }
+                }
+              )
+            } else {
+              const result3 = await cloudinary.uploader.destroy(
+                result1[0].img_id
+              )
+              db.query(
+                `update db_image set img_id = '${result.public_id}', image = '${result.url}', created_at = "${result.created_at}" where product_type_id = ${ptype_id};`,
+                (err, result) => {
+                  if (err) {
+                    return res.status(401).send(err)
                   } else {
                     return res.status(200).send({
                       message: 'inserted successfully'
