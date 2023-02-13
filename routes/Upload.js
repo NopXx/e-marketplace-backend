@@ -232,6 +232,63 @@ router.post(
   }
 )
 
+// upload transport image
+router.post(
+  '/upload/transport/:id',
+  upload.single('image'),
+  [authJwt.verifyToken],
+  async (req, res) => {
+    const tran_id = req.params.id
+    try {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'image/transport'
+      })
+      db.query(
+        `select * from db_image where transport_id = ${tran_id};`,
+        async (err, result1) => {
+          if (err) {
+            return res.status(401).send(err)
+          } else {
+            if (result1.length === 0) {
+              db.query(
+                `insert into db_image (img_id, transport_id, image, created_at, default_image) values ('${result.public_id}',${tran_id}, '${result.url}', "${result.created_at}", 1);`,
+                (err, result) => {
+                  if (err) {
+                    return res.status(401).send(err)
+                  } else {
+                    return res.status(200).send({
+                      message: 'inserted successfully'
+                    })
+                  }
+                }
+              )
+            } else {
+              const result3 = await cloudinary.uploader.destroy(
+                result1[0].img_id
+              )
+              db.query(
+                `update db_image set img_id = '${result.public_id}', image = '${result.url}', created_at = "${result.created_at}" where transport_id = ${tran_id};`,
+                (err, result) => {
+                  if (err) {
+                    return res.status(401).send(err)
+                  } else {
+                    return res.status(200).send({
+                      message: 'inserted successfully'
+                    })
+                  }
+                }
+              )
+            }
+          }
+        }
+      )
+    } catch (err) {
+      console.error(err)
+      res.status(500).json({ err: 'Something went wrong' })
+    }
+  }
+)
+
 // get detail
 router.post('/upload/product/detail', async (req, res) => {
   const id = req.body.id
