@@ -3,18 +3,29 @@ const router = express.Router()
 const authJwt = require('../middleware/authJwt')
 const db = require('../lib/db.js')
 
+// get order by admin
+router.get('/order/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
+  db.query('select * from orders', (err, data) => {
+    if (err) {
+      return res.status(401).send(err)
+    } else {
+      return res.status(200).send(data)
+    }
+  })
+})
+
 // order by user
 router.get('/order', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
-    `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image, 
+    `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, 
     (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image
-    FROM ecom.order 
-    LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id 
+    FROM orders 
+    LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
     LEFT JOIN store ON store.store_id = product.store_id
     LEFT JOIN db_image ON db_image.product_id = product.product_id
-    where ecom.order.user_id = ${user_id} AND db_image.default_image = 1`,
+    where orders.user_id = ${user_id} AND db_image.default_image = 1`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
@@ -29,15 +40,15 @@ router.get('/order/:order_id', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   const order_id = req.params.order_id
   db.query(
-    `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
-    FROM ecom.order 
-    LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id 
+    `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
+    FROM orders 
+    LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
     LEFT JOIN store ON store.store_id = product.store_id
     LEFT JOIN db_image ON db_image.product_id = product.product_id
     LEFT JOIN transport ON transport.transport_id = order_detail.transport_id
     LEFT JOIN user_address ON user_address.user_a_id = order_detail.user_a_id
-    where ecom.order.order_id = ${order_id} and ecom.order.user_id = ${user_id} AND db_image.default_image = 1`,
+    where orders.order_id = ${order_id} and orders.user_id = ${user_id} AND db_image.default_image = 1`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
@@ -58,9 +69,9 @@ router.get('/order/:order_id', [authJwt.verifyToken], (req, res) => {
 router.get('/order/store/:id', [authJwt.verifyToken], (req, res) => {
   const store_id = req.params.id
   db.query(
-    `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image, user_address.*
-    FROM ecom.order 
-    LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id 
+    `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, user_address.*
+    FROM orders 
+    LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
     LEFT JOIN store ON store.store_id = product.store_id
     LEFT JOIN db_image ON db_image.product_id = product.product_id
@@ -82,15 +93,15 @@ router.get(
   (req, res) => {
     const order_id = req.params.order_id
     db.query(
-      `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
-    FROM ecom.order 
-    LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id 
+      `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
+    FROM orders 
+    LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
     LEFT JOIN store ON store.store_id = product.store_id
     LEFT JOIN db_image ON db_image.product_id = product.product_id
     LEFT JOIN transport ON transport.transport_id = order_detail.transport_id
     LEFT JOIN user_address ON user_address.user_a_id = order_detail.user_a_id
-    where ecom.order.order_id = ${order_id} AND db_image.default_image = 1`,
+    where orders.order_id = ${order_id} AND db_image.default_image = 1`,
       (err, data) => {
         if (err) {
           return res.status(401).send(err)
@@ -128,7 +139,7 @@ router.post('/order', [authJwt.verifyToken], (req, res) => {
           })
         } else {
           db.query(
-            `INSERT INTO ecom.order (user_id, payment_status, created_at) VALUES (${user_id}, 0, now())`,
+            `INSERT INTO orders (user_id, payment_status, created_at) VALUES (${user_id}, 0, now())`,
             (err, result) => {
               if (err) {
                 return res.status(401).send(err)
@@ -139,7 +150,7 @@ router.post('/order', [authJwt.verifyToken], (req, res) => {
                   data[0].product_number - data[0].item_number
                 const product_id = data[0].product_id
                 db.query(
-                  `INSERT INTO ecom.order_detail (order_id, product_id, item_number, user_a_id, order_price) VALUES (${order_id}, ${data[0].product_id}, ${data[0].item_number}, ${user_a_id}, '${order_price}')`,
+                  `INSERT INTO orders_detail (order_id, product_id, item_number, user_a_id, order_price) VALUES (${order_id}, ${data[0].product_id}, ${data[0].item_number}, ${user_a_id}, '${order_price}')`,
                   (err, result) => {
                     if (err) {
                       return res.status(401).send(err)
@@ -185,10 +196,10 @@ router.patch(
     const order_id = req.params.id
     const cancel_order_detail = req.body.cancel_order_detail
     db.query(
-      `select ecom.order.*, order_detail.*, product.* from ecom.order 
-      LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id
+      `select orders.*, order_detail.*, product.* from orders 
+      LEFT JOIN order_detail ON order_detail.order_id = orders.order_id
         LEFT JOIN product ON order_detail.product_id = product.product_id
-        where ecom.order.order_id = ${order_id};`,
+        where orders.order_id = ${order_id};`,
       (err, data) => {
         if (err) {
           return res.status(401).send(err)
@@ -199,13 +210,13 @@ router.patch(
             })
           } else {
             db.query(
-              `update ecom.order set order_user_cancel = 1 where order_id = ${order_id}`,
+              `update orders set order_user_cancel = 1 where order_id = ${order_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send(err)
                 } else {
                   db.query(
-                    `update ecom.order_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
+                    `update orders_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
                     (err, result) => {
                       if (err) {
                         return res.status(401).send(err)
@@ -245,7 +256,7 @@ router.patch(
   (req, res) => {
     const order_id = req.params.id
     db.query(
-      `select * from ecom.order where order_id = ${order_id}`,
+      `select * from orders where order_id = ${order_id}`,
       (err, data) => {
         if (err) {
           return res.status(401).send(err)
@@ -264,7 +275,7 @@ router.patch(
               status = 3
             }
             db.query(
-              `update ecom.order set order_status = ${status} where order_id = ${order_id}`,
+              `update orders set order_status = ${status} where order_id = ${order_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send(err)
@@ -289,10 +300,10 @@ router.patch(
     const order_id = req.params.id
     const cancel_order_detail = req.body.cancel_order_detail
     db.query(
-      `select ecom.order.*, order_detail.*, product.* from ecom.order 
-      LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id
+      `select orders.*, order_detail.*, product.* from orders 
+      LEFT JOIN order_detail ON order_detail.order_id = orders.order_id
         LEFT JOIN product ON order_detail.product_id = product.product_id
-        where ecom.order.order_id = ${order_id};`,
+        where orders.order_id = ${order_id};`,
       (err, data) => {
         if (err) {
           return res.status(401).send(err)
@@ -303,13 +314,13 @@ router.patch(
             })
           } else {
             db.query(
-              `update ecom.order set order_store_cancel = 1 where order_id = ${order_id}`,
+              `update orders set order_store_cancel = 1 where order_id = ${order_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send(err)
                 } else {
                   db.query(
-                    `update ecom.order_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
+                    `update orders_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
                     (err, result) => {
                       if (err) {
                         return res.status(401).send(err)
@@ -350,7 +361,7 @@ router.patch(
     const transport_id = req.body.transport_id
     const order_tag = req.body.order_tag
     db.query(
-      `select * from ecom.order where order_id = ${order_id}`,
+      `select * from orders where order_id = ${order_id}`,
       (err, data) => {
         if (err) {
           return res.status(401).send(err)
@@ -361,7 +372,7 @@ router.patch(
             })
           } else {
             db.query(
-              `update ecom.order_detail set transport_id = '${transport_id}', order_tag = '${order_tag}' where order_id = ${order_id}`,
+              `update orders_detail set transport_id = '${transport_id}', order_tag = '${order_tag}' where order_id = ${order_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send(err)
