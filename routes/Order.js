@@ -7,7 +7,8 @@ const db = require('../lib/db.js')
 router.get('/order', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
-    `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image
+    `SELECT ecom.order.*, order_detail.*, product.*, store.*, db_image.image, 
+    (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image
     FROM ecom.order 
     LEFT JOIN order_detail ON order_detail.order_id = ecom.order.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
