@@ -40,7 +40,8 @@ router.get('/order/:order_id', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   const order_id = req.params.order_id
   db.query(
-    `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
+    `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*,
+    (select db_image.image from db_image where db_image.transport_id = order_detail.transport_id) as transport_image
     FROM orders 
     LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
@@ -93,7 +94,8 @@ router.get(
   (req, res) => {
     const order_id = req.params.order_id
     db.query(
-      `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*
+      `SELECT orders.*, order_detail.*, product.*, store.*, db_image.image, transport.*, user_address.*,
+      (select db_image.image from db_image where db_image.transport_id = order_detail.transport_id) as transport_image
     FROM orders 
     LEFT JOIN order_detail ON order_detail.order_id = orders.order_id 
     LEFT JOIN product ON product.product_id = order_detail.product_id
@@ -150,7 +152,7 @@ router.post('/order', [authJwt.verifyToken], (req, res) => {
                   data[0].product_number - data[0].item_number
                 const product_id = data[0].product_id
                 db.query(
-                  `INSERT INTO orders_detail (order_id, product_id, item_number, user_a_id, order_price) VALUES (${order_id}, ${data[0].product_id}, ${data[0].item_number}, ${user_a_id}, '${order_price}')`,
+                  `INSERT INTO order_detail (order_id, product_id, item_number, user_a_id, order_price) VALUES (${order_id}, ${data[0].product_id}, ${data[0].item_number}, ${user_a_id}, '${order_price}')`,
                   (err, result) => {
                     if (err) {
                       return res.status(401).send(err)
@@ -216,7 +218,7 @@ router.patch(
                   return res.status(401).send(err)
                 } else {
                   db.query(
-                    `update orders_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
+                    `update order_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
                     (err, result) => {
                       if (err) {
                         return res.status(401).send(err)
@@ -320,7 +322,7 @@ router.patch(
                   return res.status(401).send(err)
                 } else {
                   db.query(
-                    `update orders_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
+                    `update order_detail set order_cancel_detail = '${cancel_order_detail}' where order_id = ${order_id}`,
                     (err, result) => {
                       if (err) {
                         return res.status(401).send(err)
@@ -372,7 +374,7 @@ router.patch(
             })
           } else {
             db.query(
-              `update orders_detail set transport_id = '${transport_id}', order_tag = '${order_tag}' where order_id = ${order_id}`,
+              `update order_detail set transport_id = '${transport_id}', order_tag = '${order_tag}' where order_id = ${order_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send(err)
