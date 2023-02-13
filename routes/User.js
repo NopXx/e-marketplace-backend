@@ -25,16 +25,8 @@ router.get('/user', [authJwt.verifyToken], (req, res) => {
 router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
   db.query(`select * from user;`, (err, data) => {
     if (err) {
-      return res.status(400).send({
-        code: err.code,
-        message: err.message
-      })
+      return res.status(401).send(err)
     } else {
-      if (data.length === 0) {
-        return res.status(404).send({
-          message: 'user_id not found'
-        })
-      }
       return res.status(200).send(data)
     }
   })
@@ -47,10 +39,7 @@ router.get(
     const user_id = req.params.user_id
     db.query(`select * from user where user_id = ${user_id};`, (err, data) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         if (data.length === 0) {
           return res.status(404).send({
@@ -74,10 +63,7 @@ router.patch('/user/:user_id', [authJwt.verifyToken], (req, res) => {
     `select user_id from user where user_id = ${user_id};`,
     (err, result) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         if (result.length === 0) {
           return res.status(404).send({
@@ -89,10 +75,7 @@ router.patch('/user/:user_id', [authJwt.verifyToken], (req, res) => {
                 updated_at = now() where user_id = ${user_id}`,
             (err, result) => {
               if (err) {
-                return res.status(400).send({
-                  code: err.code,
-                  message: err.message
-                })
+                return res.status(401).send(err)
               } else {
                 return res.status(200).send({
                   message: 'update succeeded'
@@ -112,10 +95,7 @@ router.delete('/user/:user_id', [authJwt.verifyToken], (req, res) => {
     `select user_id from user where user_id = ${user_id};`,
     (err, result) => {
       if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
         if (result.length === 0) {
           return res.status(404).send({
@@ -126,10 +106,7 @@ router.delete('/user/:user_id', [authJwt.verifyToken], (req, res) => {
             `delete from user where user_id = ${user_id}`,
             (err, result) => {
               if (err) {
-                return res.status(400).send({
-                  code: err.code,
-                  message: err.message
-                })
+                return res.status(401).send(err)
               } else {
                 return res.status(200).send({
                   message: 'delete succeeded'
