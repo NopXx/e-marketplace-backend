@@ -52,3 +52,5 @@ app.use("/api", [role, user_add, otp, user_role, user, store, product, product_t
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
 })
+
+module.exports = app
