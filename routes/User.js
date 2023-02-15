@@ -23,7 +23,7 @@ router.get('/user', [authJwt.verifyToken], (req, res) => {
 })
 
 router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
-  db.query(`select * from user;`, (err, data) => {
+  db.query(`select * from user where user_id not like ${req.user.user_id};`, (err, data) => {
     if (err) {
       return res.status(401).send(err)
     } else {
