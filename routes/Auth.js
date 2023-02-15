@@ -69,10 +69,24 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
             msg: 'username or password not found'
           })
         } else {
+          const role_name = {
+            admin: '',
+            store: '',
+            user: '',
+          }
+          result.forEach((val) => {
+            if (val.role_name === 'admin') {
+              role_name.admin = val.role_name
+            } else if (val.role_name === 'store') {
+              role_name.store = val.role_name
+            } else {
+              role_name.user = val.role_name
+            }
+          })
           const userData = {
             f_name: result[0].f_name,
             role_id: result[0].role_id,
-            role_name: result[0].role_name,
+            role_name: role_name,
             user_id: result[0].user_id
           }
           const secret = process.env.ACCESS_TOKEN_SECRET

@@ -29,10 +29,10 @@ verifyToken = (req, res, next) => {
 isAdmin = async (req, res, next) => {
   try {
     if (
-      req.user.role_name === 'Admin' ||
-      req.user.role_name === 'Teacher' ||
-      req.user.role_name === 'admin' ||
-      req.user.role_name === 'teacher'
+      req.user.role_name.admin === 'Admin' ||
+      req.user.role_name.admin === 'Teacher' ||
+      req.user.role_name.admin === 'admin' ||
+      req.user.role_name.admin === 'teacher'
     ) {
       return next()
     }
