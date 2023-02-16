@@ -5,20 +5,30 @@ const db = require('../lib/db.js')
 
 // search product
 router.get('/product/search', (req, res) => {
+  const id = req.query.id
   const name = req.query.name
-  const store_id = req.query.store_id
+    db.query(
+      `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1 and product.product_name like '%${name}%';`,
+      (err, data) => {
+        if (err) {
+          return res.status(401).send(err)
+        } else {
+          return res.status(200).send(data)
+        }
+      }
+    )
+})
+
+// search product
+router.get('/product/search/type', (req, res) => {
+  const id = req.query.id
   db.query(
-    `select * from product where product_name like '%${name}%' or store_id like '%${store_id}';`,
+    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1 and product.py_id = ${id};`,
     (err, data) => {
       if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
-        return res.status(200).send({
-          data,
-          total: data.length
-        })
+        return res.status(200).send(data)
       }
     }
   )
@@ -30,14 +40,9 @@ router.get('/product', (req, res) => {
     `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1;`,
     (err, data) => {
       if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
+        return res.status(401).send(err)
       } else {
-        return res.status(200).json({
-          data: data,
-          total: data.length
-        })
+        return res.status(200).json(data)
       }
     }
   )
