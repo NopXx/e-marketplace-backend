@@ -46,8 +46,9 @@ const userfollow = require("./routes/UserFollow")
 const cart = require("./routes/Cart")
 const order = require("./routes/Order")
 const transport = require("./routes/Transport")
+const report = require("./routes/Report")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, image, userfollow, cart, order, transport]);
+app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, image, userfollow, cart, order, transport, report]);
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
