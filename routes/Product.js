@@ -84,15 +84,18 @@ router.get('/product/store/:id', (req, res) => {
 
 // get Product Detail
 router.get('/product/detail/:id', (req, res) => {
-  db.query(`select * from product_detail where product_id = ${req.params.id}`, (err, data) => {
-    if (err) {
-      return res.status(401).json({
-        message: err.message
-      })
-    } else {
-      return res.status(200).json(data)
+  db.query(
+    `select * from product_detail where product_id = ${req.params.id}`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).json({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json(data)
+      }
     }
-  })
+  )
 })
 // create Product
 router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
@@ -287,7 +290,7 @@ router.delete(
                   })
                 } else {
                   return res.status(200).json({
-                    message: "Updated product successfully"
+                    message: 'Updated product successfully'
                   })
                 }
               }
@@ -327,7 +330,7 @@ router.patch(
                   })
                 } else {
                   return res.status(200).json({
-                    message: "Updated product successfully"
+                    message: 'Updated product successfully'
                   })
                 }
               }
