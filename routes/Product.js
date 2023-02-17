@@ -7,23 +7,33 @@ const db = require('../lib/db.js')
 router.get('/product/search', (req, res) => {
   const id = req.query.id
   const name = req.query.name
-    db.query(
-      `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1 and product.product_name like '%${name}%';`,
-      (err, data) => {
-        if (err) {
-          return res.status(401).send(err)
-        } else {
-          return res.status(200).send(data)
-        }
+  db.query(
+    `select product.*, db_image.image, store.store_name, 
+    (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image
+    from product 
+    LEFT JOIN db_image ON db_image.product_id = product.product_id 
+    left JOIN store on store.store_id = product.store_id
+    where product_show = 1 AND db_image.default_image = 1 and product.product_name like '%${name}%';`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send(err)
+      } else {
+        return res.status(200).send(data)
       }
-    )
+    }
+  )
 })
 
 // search product
 router.get('/product/search/type', (req, res) => {
   const id = req.query.id
   db.query(
-    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1 and product.py_id = ${id};`,
+    `select product.*, db_image.image, store.store_name, 
+    (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image
+    from product 
+    LEFT JOIN db_image ON db_image.product_id = product.product_id 
+    left JOIN store on store.store_id = product.store_id
+    where product_show = 1 AND db_image.default_image = 1 and product.py_id = ${id} AND product.product_number > 0;`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
@@ -37,7 +47,12 @@ router.get('/product/search/type', (req, res) => {
 // get Product All
 router.get('/product', (req, res) => {
   db.query(
-    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1;`,
+    `select product.*, db_image.image, store.store_name, 
+    (SELECT db_image.image FROM db_image WHERE db_image.store_id = product.store_id) as store_image 
+    from product 
+    LEFT JOIN db_image ON db_image.product_id = product.product_id 
+    left JOIN store on store.store_id = product.store_id
+    where product_show = 1 AND db_image.default_image = 1 AND product.product_number > 0;`,
     (err, data) => {
       if (err) {
         return res.status(401).send(err)
